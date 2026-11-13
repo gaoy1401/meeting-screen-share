@@ -17,6 +17,11 @@ logging:
 assert key == "test-key"
 assert secret == "test secret"
 
+for header in ("keys: # API credentials", "keys:\t# API credentials"):
+    assert parse_livekit_credentials(
+        f"{header}\n  test-key: test-secret\n"
+    ) == ("test-key", "test-secret")
+
 config = HardwareScreenConfig()
 gst = config.gstreamer_command()
 lk = config.livekit_command("/home/test/.local/bin/lk")

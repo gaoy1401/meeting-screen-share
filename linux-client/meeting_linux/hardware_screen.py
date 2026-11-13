@@ -52,7 +52,10 @@ def parse_livekit_credentials(config_text: str) -> tuple[str, str]:
             continue
         indent = len(raw_line) - len(raw_line.lstrip())
         if keys_indent is None:
-            if stripped == "keys:":
+            header = stripped.split(maxsplit=1)
+            if header[0] == "keys:" and (
+                len(header) == 1 or header[1].startswith("#")
+            ):
                 keys_indent = indent
             continue
         if indent <= keys_indent:
