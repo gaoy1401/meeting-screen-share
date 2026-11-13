@@ -1,0 +1,26 @@
+[Unit]
+Description=Meeting NVIDIA H264 screen publisher
+After=graphical-session.target meeting-livekit.service
+Requires=meeting-livekit.service
+
+[Service]
+Type=simple
+WorkingDirectory=%h/meeting-screen-share/linux-client
+Environment=PATH=%h/.local/bin:/usr/local/bin:/usr/bin:/bin
+EnvironmentFile=%h/.config/meeting/client.env
+Environment=MEETING_LIVEKIT_URL=ws://127.0.0.1:7880
+Environment=MEETING_ROOM=demo
+Environment=MEETING_AUX_SCREEN_IDENTITY=pxg-screen
+Environment=MEETING_SCREEN_WIDTH=1920
+Environment=MEETING_SCREEN_HEIGHT=1080
+Environment=MEETING_SCREEN_FPS=30
+Environment=MEETING_SCREEN_BITRATE_KBPS=6000
+Environment=MEETING_SCREEN_GOP=30
+Environment=MEETING_SCREEN_TCP_PORT=5005
+ExecStart=%h/meeting-screen-share/.venv/bin/python -m meeting_linux.hardware_screen
+Restart=on-failure
+RestartSec=2
+TimeoutStopSec=10
+
+[Install]
+WantedBy=default.target

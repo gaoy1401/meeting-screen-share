@@ -1,0 +1,25 @@
+--- a/Sources/LiveKit/Track/Capturers/MacOSScreenCapturer.swift
++++ b/Sources/LiveKit/Track/Capturers/MacOSScreenCapturer.swift
+@@ -72,13 +72,19 @@
+                   let nativeDisplay = displaySource.nativeType as? SCDisplay
+         {
+-            let includedApps = options.includeCurrentApplication ?
+-                content.applications :
+-                content.applications.filter { app in Bundle.main.bundleIdentifier != app.bundleIdentifier }
++            // An inclusion list is a snapshot of the applications that existed
++            // when sharing started, so applications launched later never appear.
++            // Use an exclusion filter for display sharing so ScreenCaptureKit can
++            // include future applications automatically.
++            let excludedApps = options.includeCurrentApplication ?
++                [] :
++                content.applications.filter { app in Bundle.main.bundleIdentifier == app.bundleIdentifier }
+ 
+             let excludedWindows = content.windows.filter { window in options.excludeWindowIDs.contains(window.windowID) }
+ 
+-            filter = SCContentFilter(display: nativeDisplay, including: includedApps, exceptingWindows: excludedWindows)
++            filter = SCContentFilter(display: nativeDisplay,
++                                     excludingApplications: excludedApps,
++                                     exceptingWindows: excludedWindows)
+         } else {
+             log("Unable to resolve SCContentFilter", .error)
+             throw LiveKitError(.invalidState, message: "Unable to resolve SCContentFilter")

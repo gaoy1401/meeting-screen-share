@@ -1,0 +1,44 @@
+name: CI
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+permissions:
+  contents: read
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+jobs:
+  server-and-protocols:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-node@v7
+        with:
+          node-version: '24'
+          cache: npm
+          cache-dependency-path: server/package-lock.json
+      - uses: actions/setup-python@v7
+        with:
+          python-version: '3.12'
+      - run: npm ci --prefix server
+      - run: npm test --prefix server
+      - run: python3 -m compileall -q linux-client scripts
+      - run: PYTHONPATH=linux-client python3 linux-client/check-client.py
+      - run: PYTHONPATH=linux-client python3 linux-client/check-hardware-screen.py
+      - run: python3 scripts/export-source.py --check
+  macos:
+    runs-on: macos-15
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v7
+      - run: ./scripts/build-client.sh
+  windows:
+    runs-on: windows-2022
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v7
+      - shell: pwsh
+        run: ./windows-client/scripts/build.ps1

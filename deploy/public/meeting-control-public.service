@@ -1,0 +1,27 @@
+[Unit]
+Description=Meeting public control and token service
+After=network-online.target meeting-livekit-public.service
+Wants=network-online.target
+Requires=meeting-livekit-public.service
+
+[Service]
+Type=simple
+User=meeting
+Group=meeting
+WorkingDirectory=/opt/meeting/server
+EnvironmentFile=/etc/meeting/control.env
+ExecStart=/usr/bin/node src/index.js
+Restart=on-failure
+RestartSec=2
+TimeoutStopSec=15
+LimitNOFILE=8192
+NoNewPrivileges=true
+PrivateTmp=true
+ProtectHome=true
+ProtectSystem=strict
+ProtectKernelTunables=true
+ProtectKernelModules=true
+ProtectControlGroups=true
+
+[Install]
+WantedBy=multi-user.target

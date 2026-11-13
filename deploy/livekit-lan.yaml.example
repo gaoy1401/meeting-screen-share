@@ -1,0 +1,12 @@
+# Reference only. Generate matching random credentials and real addresses with:
+# python3 scripts/configure-server.py --ip YOUR_SERVER_LAN_IPV4
+port: 7880
+rtc:
+  tcp_port: 7881
+  udp_port: 7882
+  use_external_ip: false
+  node_ip: 127.0.0.1
+keys:
+  REPLACE_WITH_GENERATED_KEY: REPLACE_WITH_GENERATED_SECRET
+logging:
+  level: info

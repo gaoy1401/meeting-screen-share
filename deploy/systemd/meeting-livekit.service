@@ -1,0 +1,15 @@
+[Unit]
+Description=Meeting LiveKit SFU
+After=network-online.target
+
+[Service]
+Type=simple
+WorkingDirectory=%h/meeting-screen-share
+ExecStart=%h/.local/bin/livekit-server --config %h/meeting-screen-share/.runtime/server/livekit.yaml
+Restart=on-failure
+RestartSec=2
+TimeoutStopSec=10
+LimitNOFILE=65536
+
+[Install]
+WantedBy=default.target

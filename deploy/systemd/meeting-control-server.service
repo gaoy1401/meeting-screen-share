@@ -1,0 +1,16 @@
+[Unit]
+Description=Meeting TCP signaling and token service
+After=network-online.target meeting-livekit.service
+Requires=meeting-livekit.service
+
+[Service]
+Type=simple
+WorkingDirectory=%h/meeting-screen-share/server
+EnvironmentFile=%h/meeting-screen-share/.runtime/server/control.env
+ExecStart=/usr/bin/node src/index.js
+Restart=on-failure
+RestartSec=2
+TimeoutStopSec=10
+
+[Install]
+WantedBy=default.target

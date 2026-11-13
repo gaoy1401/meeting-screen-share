@@ -1,0 +1,26 @@
+[Unit]
+Description=Meeting GTK WebRTC client
+After=graphical-session.target meeting-control-server.service
+Requires=meeting-control-server.service
+
+[Service]
+Type=simple
+WorkingDirectory=%h/meeting-screen-share/linux-client
+EnvironmentFile=%h/.config/meeting/client.env
+Environment=MEETING_SERVER=127.0.0.1:9000
+Environment=MEETING_ROOM=demo
+Environment=MEETING_NAME=PXG
+Environment=MEETING_AUTO_JOIN=0
+Environment=MEETING_AUTO_SHARE=0
+Environment=MEETING_AUTO_MIC=0
+Environment=MEETING_MEDIA_TRANSPORT=webrtc
+Environment=MEETING_VIDEO_CODEC=h264
+Environment=MEETING_EXTERNAL_SCREEN=0
+Environment=MEETING_AUX_SCREEN_IDENTITY=pxg-screen
+ExecStart=%h/meeting-screen-share/linux-client/run-client.sh
+Restart=on-failure
+RestartSec=2
+TimeoutStopSec=10
+
+[Install]
+WantedBy=default.target

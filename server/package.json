@@ -1,0 +1,21 @@
+{
+  "name": "meeting-screen-share-server",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "description": "Self-hosted room signaling, LiveKit tokens and legacy diagnostic relay",
+  "scripts": {
+    "start": "node src/index.js",
+    "test": "node --test",
+    "check": "node tools/check-server.js",
+    "check:webrtc": "node tools/check-webrtc-server.js",
+    "test:unit": "node --test test/config.test.js test/protocol.test.js test/livekit-token.test.js test/signaling-unit.test.js"
+  },
+  "engines": {
+    "node": ">=22"
+  },
+  "dependencies": {
+    "livekit-server-sdk": "2.17.0"
+  },
+  "license": "MIT"
+}
