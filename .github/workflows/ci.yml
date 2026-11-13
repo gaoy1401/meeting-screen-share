@@ -2,6 +2,7 @@ name: CI
 on:
   push:
     branches: [main]
+    paths-ignore: ['**/*.md']
   pull_request:
   workflow_dispatch:
 permissions:
@@ -34,11 +35,28 @@ jobs:
     timeout-minutes: 30
     steps:
       - uses: actions/checkout@v7
-      - run: ./scripts/build-client.sh
+      - run: ./scripts/package-mac.sh
+      - uses: actions/upload-artifact@v7
+        with:
+          name: macos-preview
+          path: dist/releases/*
+          if-no-files-found: error
+          retention-days: 14
   windows:
     runs-on: windows-2022
     timeout-minutes: 30
     steps:
       - uses: actions/checkout@v7
       - shell: pwsh
-        run: ./windows-client/scripts/build.ps1
+        run: choco install innosetup --no-progress -y
+      - shell: pwsh
+        run: ./windows-client/scripts/build-release.ps1
+      - uses: actions/upload-artifact@v7
+        with:
+          name: windows-preview
+          path: |
+            windows-client/dist/*.zip
+            windows-client/dist/*.exe
+            windows-client/dist/SHA256SUMS.txt
+          if-no-files-found: error
+          retention-days: 14

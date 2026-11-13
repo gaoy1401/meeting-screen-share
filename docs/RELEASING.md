@@ -3,7 +3,19 @@
 Source belongs in Git; installable binaries belong in GitHub Releases.
 See [GitHub's release guide](https://docs.github.com/en/repositories/releasing-projects-on-github/managing-releases-in-a-repository).
 
-## First publication
+## Automatic preview publication
+
+The repository is public at https://github.com/gaoy1401/meeting-screen-share.
+A successful CI push build on `main` creates a prerelease for the version in
+`server/package.json` if that release does not already exist. It downloads only
+artifacts from that CI run, verifies their checksums, and tags the tested commit.
+Pull-request CI runs cannot publish releases. Existing assets remain unchanged.
+
+These releases are explicitly marked previews: native builds, protocol tests and
+checksums are verified, but real installation and two-device media acceptance
+remain separate. Complete those before promoting a release as validated/stable.
+
+## Creating another repository
 
 Review the MIT license, public README, [security limits](../SECURITY.md), and
 [validation record](VALIDATION.md). The first release is a **preview**.
@@ -43,7 +55,7 @@ Local macOS packaging: `./scripts/package-mac.sh`. Windows packaging:
 Linux is a source distribution. No Windows or Linux installer is produced by
 running the Mac build script.
 
-## Publish a preview release
+## Manual release alternative
 
 After the above checks, tag the tested commit and create a draft prerelease:
 

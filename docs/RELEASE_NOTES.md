@@ -14,5 +14,8 @@ Linux runs from source. Verify SHA-256 checksums before installing.
 macOS previews are ad-hoc signed and not notarized. Windows previews may be
 unsigned. See the platform installation guides and THIRD_PARTY_NOTICES.md.
 
-Maintainer: add actual cross-device validation results before publishing this
-draft. Do not describe compilation/unit tests as successful audio/video acceptance.
+These packages are built by GitHub Actions after server/protocol tests and native
+client builds pass. macOS package signatures and archive checksums are verified;
+Windows protocol tests run in Release mode. Windows installer execution and
+two-device audio/video acceptance have not been performed. This is a preview,
+not a claim of production readiness or verified cross-device media behavior.

@@ -64,8 +64,8 @@ Write-Host "Using CMake:        $CMakeExecutable"
   -S $ProjectRoot `
   -B $BuildDirectory `
   -A x64 `
-  -DLIVEKIT_SDK_VERSION=1.4.0 `
-  -DBUILD_TESTING=ON
+  "-DLIVEKIT_SDK_VERSION=1.4.0" `
+  "-DBUILD_TESTING=ON"
 if ($LASTEXITCODE -ne 0) {
   throw "CMake configure failed with exit code $LASTEXITCODE."
 }

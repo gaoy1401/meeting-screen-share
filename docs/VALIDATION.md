@@ -1,7 +1,9 @@
-# Validation record — 0.1.0 preview
+# Local validation record — 0.1.0 preview
 
 Date: 2026-11-13. Build host: Apple Silicon macOS, Swift 6.3.3, Node.js 26.8.2.
-This record reports actual checks and limitations, not a production certification.
+This is the initial local validation snapshot. Current cloud builds and packaging
+results are available in [GitHub Actions](https://github.com/gaoy1401/meeting-screen-share/actions).
+It is not a production certification.
 
 | Check | Result |
 | --- | --- |
@@ -20,7 +22,7 @@ This record reports actual checks and limitations, not a production certificatio
 | Python parsing and shell syntax | Passed |
 | Generated server configuration | Matching credentials, private file permissions, refuses overwrite |
 | Public source export | Pattern scan passed; excludes build caches, local config, private keys and binaries |
-| GitHub CI / package workflow | Added; not executed remotely in this environment |
+| GitHub CI / package workflow | Source published; cloud validation is now running (see Actions above) |
 | Two-device screen/audio, reconnection and install UI | Not performed; complete test-plan.md before a validated binary release |
 
 The host could not resolve dependency-download hosts. Existing npm and Swift
@@ -34,8 +36,9 @@ license supplement with provenance is included under `third-party/livekit-uniffi
 The macOS app includes dependency notices and privacy manifests. Debug symbols
 and local build-path strings are stripped from the distributed executable.
 
-Publishing was not completed: terminal networking and project Git initialization
-were blocked; the available GitHub integration could read the account but could
-not create a repository, and browser control was unavailable. No existing GitHub
-repository or deployed server was modified. Use the provided publication script
-from a terminal with GitHub access, then complete CI and device acceptance.
+Source is now published at https://github.com/gaoy1401/meeting-screen-share.
+Remote server tests (including the five socket tests blocked locally) passed in
+the first CI run. A Windows PowerShell SDK-version quoting error found in that
+run was fixed. The current cloud build is the authority for native build status.
+The release workflow only publishes packages after all CI jobs for their exact
+source commit pass. It does not imply a Windows installation or real media test.

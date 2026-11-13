@@ -75,5 +75,6 @@ PYTHONPATH=linux-client python3 linux-client/check-client.py
 PYTHONPATH=linux-client python3 linux-client/check-hardware-screen.py
 ```
 
-完整验收见 [测试计划](docs/test-plan.md)。GitHub Actions 提供跨平台 CI 和手动
-打包。项目采用 [MIT](LICENSE)，依赖保留各自的[许可证](THIRD_PARTY_NOTICES.md)。
+完整验收见 [测试计划](docs/test-plan.md)。GitHub Actions 提供跨平台 CI 和安装包构建；每个版本首次通过主分支 CI 后，
+自动发布预览版到 [Releases](https://github.com/gaoy1401/meeting-screen-share/releases)。
+已有版本的安装包不会被自动覆盖。项目采用 [MIT](LICENSE)，依赖保留各自的[许可证](THIRD_PARTY_NOTICES.md)。

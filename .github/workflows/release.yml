@@ -1,0 +1,56 @@
+name: Publish first preview
+on:
+  workflow_run:
+    workflows: [CI]
+    types: [completed]
+permissions:
+  contents: read
+jobs:
+  publish:
+    if: >-
+      github.event.workflow_run.conclusion == 'success' &&
+      github.event.workflow_run.event == 'push' &&
+      github.event.workflow_run.head_branch == 'main' &&
+      github.event.workflow_run.head_repository.full_name == github.repository
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    permissions:
+      actions: read
+      contents: write
+    concurrency:
+      group: publish-preview
+      cancel-in-progress: false
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          ref: ${{ github.event.workflow_run.head_sha }}
+          persist-credentials: false
+      - name: Publish this version once from verified build artifacts
+        env:
+          GH_TOKEN: ${{ github.token }}
+          CI_RUN_ID: ${{ github.event.workflow_run.id }}
+          CI_HEAD_SHA: ${{ github.event.workflow_run.head_sha }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          version=$(node -p 'require("./server/package.json").version')
+          [[ "$version" =~ ^[0-9]+\.[0-9]+\.[0-9]+$ ]]
+          tag="v$version"
+          if gh release view "$tag" --repo "$GITHUB_REPOSITORY" >/dev/null 2>&1; then
+            echo "Release $tag already exists; leaving its assets unchanged."
+            exit 0
+          fi
+          gh run download "$CI_RUN_ID" --repo "$GITHUB_REPOSITORY" --dir packages
+          test -d packages/macos-preview
+          test -d packages/windows-preview
+          (
+            cd packages/macos-preview
+            for checksum in *.sha256; do sha256sum -c "$checksum"; done
+          )
+          (cd packages/windows-preview && sha256sum -c SHA256SUMS.txt)
+          mapfile -d '' assets < <(find packages -type f \( -name '*.zip' -o -name '*.exe' -o -name '*.sha256' -o -name 'SHA256SUMS.txt' \) -print0)
+          test "${#assets[@]}" -ge 5
+          gh release create "$tag" "${assets[@]}" \
+            --repo "$GITHUB_REPOSITORY" --target "$CI_HEAD_SHA" --prerelease \
+            --title "Meeting Screen Share $version preview" \
+            --notes-file docs/RELEASE_NOTES.md

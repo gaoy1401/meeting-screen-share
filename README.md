@@ -3,7 +3,7 @@
 Native screen sharing and voice rooms for macOS, Windows and Linux, built on
 WebRTC and a self-hosted LiveKit SFU. **Early preview: trusted LAN / VPN use.**
 
-[中文说明](README.zh-CN.md) · [Architecture](docs/architecture.md) ·
+[中文说明](README.zh-CN.md) · [Downloads](https://github.com/gaoy1401/meeting-screen-share/releases) · [Architecture](docs/architecture.md) ·
 [Test plan](docs/test-plan.md) · [Release guide](docs/RELEASING.md)
 
 ## Features and status
@@ -121,8 +121,11 @@ PYTHONPATH=linux-client python3 linux-client/check-client.py
 PYTHONPATH=linux-client python3 linux-client/check-hardware-screen.py
 ```
 
-CI covers server tests, Linux protocol checks and native client builds. A
-separate manual workflow creates packages without publishing them automatically.
+CI covers server tests, Linux protocol checks and native client builds, and
+produces platform packages. The first successful push build on `main` for each
+version publishes a GitHub prerelease with those verified build artifacts.
+Existing release assets are never replaced automatically. A separate manual
+packaging workflow is also available.
 See [CONTRIBUTING.md](CONTRIBUTING.md) and the [test plan](docs/test-plan.md).
 
 | Directory | Purpose |
