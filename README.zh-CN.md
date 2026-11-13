@@ -1,5 +1,9 @@
 # Meeting Screen Share
 
+[![CI](https://github.com/gaoy1401/meeting-screen-share/actions/workflows/ci.yml/badge.svg)](https://github.com/gaoy1401/meeting-screen-share/actions/workflows/ci.yml)
+[![Release](https://img.shields.io/github/v/release/gaoy1401/meeting-screen-share?include_prereleases&label=preview)](https://github.com/gaoy1401/meeting-screen-share/releases)
+[![License: MIT](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
+
 基于 WebRTC + LiveKit 的原生屏幕共享和语音会议软件，包含 macOS、Windows、
 Linux 客户端及自部署服务端。当前是 **0.1.0 开发预览版**。
 

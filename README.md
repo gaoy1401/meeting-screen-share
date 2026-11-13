@@ -1,5 +1,9 @@
 # Meeting Screen Share
 
+[![CI](https://github.com/gaoy1401/meeting-screen-share/actions/workflows/ci.yml/badge.svg)](https://github.com/gaoy1401/meeting-screen-share/actions/workflows/ci.yml)
+[![Release](https://img.shields.io/github/v/release/gaoy1401/meeting-screen-share?include_prereleases&label=preview)](https://github.com/gaoy1401/meeting-screen-share/releases)
+[![License: MIT](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
+
 Native screen sharing and voice rooms for macOS, Windows and Linux, built on
 WebRTC and a self-hosted LiveKit SFU. **Early preview: trusted LAN / VPN use.**
 
