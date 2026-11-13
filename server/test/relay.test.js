@@ -1,5 +1,6 @@
 import assert from "node:assert/strict";
 import dgram from "node:dgram";
+import { once } from "node:events";
 import test from "node:test";
 import { MeetingServer } from "../src/meeting-server.js";
 import {
@@ -172,4 +173,113 @@ test("RTP H264 media reaches peers in the same room", async (t) => {
   assert.equal(received.sequence, 7);
   assert.equal(received.timestamp, 90_000);
   assert.deepEqual(received.payload, Buffer.from([0x65, 1, 2, 3]));
+});
+
+const snapshotWith = (expected) => (packet) =>
+  isControlAction("snapshot")(packet) &&
+  JSON.stringify(parseControlPayload(packet.payload).participants) === JSON.stringify(expected);
+
+test("a rejected UDP room switch preserves membership, heartbeat and original peers", async (t) => {
+  const server = new MeetingServer({ ...config, maxParticipantsPerRoom: 2 });
+  const address = await server.start();
+  const alice = createClient(address.port, 601);
+  const bob = createClient(address.port, 602);
+  const carol = createClient(address.port, 603);
+  const dave = createClient(address.port, 604);
+  t.after(async () => {
+    await Promise.all([alice.close(), bob.close(), carol.close(), dave.close()]);
+    await server.stop();
+  });
+  for (const [client, room, name] of [
+    [alice, "original", "Alice"], [bob, "original", "Bob"],
+    [carol, "full", "Carol"], [dave, "full", "Dave"]
+  ]) {
+    await client.join(room, name);
+    await client.waitFor(isControlAction("joined"));
+  }
+  const original = server.rooms.getBySession(alice.sessionId);
+  const snapshots = [];
+  server.on("snapshot", (snapshot) => snapshots.push(snapshot));
+  await alice.join("full", "Alice");
+  const error = await alice.waitFor(isControlAction("error"));
+  assert.equal(parseControlPayload(error.payload).message, "room is full");
+  assert.equal(server.rooms.getBySession(alice.sessionId), original);
+  assert.deepEqual(server.rooms.participants("original"), [
+    { sessionId: 601, name: "Alice" }, { sessionId: 602, name: "Bob" }
+  ]);
+  assert.deepEqual(server.rooms.participants("full"), [
+    { sessionId: 603, name: "Carol" }, { sessionId: 604, name: "Dave" }
+  ]);
+  assert.deepEqual(snapshots, []);
+
+  const beforeHeartbeat = Date.now() - 100;
+  original.lastSeenAt = beforeHeartbeat;
+  const heartbeatReceived = once(server.socket, "message", { signal: AbortSignal.timeout(1000) });
+  await alice.send(buildControlPacket(alice.sessionId, 2, { action: "heartbeat" }));
+  const [heartbeat] = await heartbeatReceived;
+  assert.equal(parseControlPayload(parsePacket(heartbeat).payload).action, "heartbeat");
+  assert.ok(original.lastSeenAt > beforeHeartbeat);
+
+  await alice.send(buildPacket({
+    type: PacketType.AUDIO, sessionId: alice.sessionId, sequence: 3,
+    payload: Buffer.from("synthetic-after-rejection")
+  }));
+  const received = await bob.waitFor((packet) => packet.type === PacketType.AUDIO);
+  assert.equal(received.sessionId, alice.sessionId);
+  assert.equal(received.payload.toString(), "synthetic-after-rejection");
+});
+
+test("a successful UDP room switch updates snapshots for both rooms", async (t) => {
+  const server = new MeetingServer(config);
+  const address = await server.start();
+  const alice = createClient(address.port, 701);
+  const bob = createClient(address.port, 702);
+  const carol = createClient(address.port, 703);
+  t.after(async () => {
+    await Promise.all([alice.close(), bob.close(), carol.close()]);
+    await server.stop();
+  });
+  for (const [client, room, name] of [
+    [alice, "original", "Alice"], [bob, "original", "Bob"], [carol, "destination", "Carol"]
+  ]) {
+    await client.join(room, name);
+    await client.waitFor(isControlAction("joined"));
+  }
+  const snapshots = [];
+  server.on("snapshot", (snapshot) => snapshots.push(snapshot));
+  await alice.join("destination", "Alice");
+  const joined = await alice.waitFor(isControlAction("joined"));
+  assert.equal(parseControlPayload(joined.payload).room, "destination");
+  const originalParticipants = [{ sessionId: 702, name: "Bob" }];
+  const destinationParticipants = [
+    { sessionId: 703, name: "Carol" }, { sessionId: 701, name: "Alice" }
+  ];
+  await bob.waitFor(snapshotWith(originalParticipants));
+  await carol.waitFor(snapshotWith(destinationParticipants));
+  assert.deepEqual(server.rooms.participants("original"), originalParticipants);
+  assert.deepEqual(server.rooms.participants("destination"), destinationParticipants);
+  assert.deepEqual(snapshots.map(({ room }) => room).sort(), ["destination", "original"]);
+});
+
+test("rejoining the current full UDP room emits one updated snapshot", async (t) => {
+  const server = new MeetingServer({ ...config, maxParticipantsPerRoom: 2 });
+  const address = await server.start();
+  const alice = createClient(address.port, 801);
+  const bob = createClient(address.port, 802);
+  t.after(async () => {
+    await Promise.all([alice.close(), bob.close()]);
+    await server.stop();
+  });
+  await alice.join("full", "Alice");
+  await alice.waitFor(isControlAction("joined"));
+  await bob.join("full", "Bob");
+  await bob.waitFor(isControlAction("joined"));
+  const snapshots = [];
+  server.on("snapshot", (snapshot) => snapshots.push(snapshot));
+  await alice.join("full", "Alice renamed");
+  await alice.waitFor(isControlAction("joined"));
+  const expected = [{ sessionId: 802, name: "Bob" }, { sessionId: 801, name: "Alice renamed" }];
+  await bob.waitFor(snapshotWith(expected));
+  assert.deepEqual(server.rooms.participants("full"), expected);
+  assert.deepEqual(snapshots, [{ room: "full", participants: expected }]);
 });

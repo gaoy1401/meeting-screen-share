@@ -27,6 +27,14 @@ c++ -std=c++20 -DNDEBUG -I windows-client/include \
 in environments that forbid listening. It is not a substitute for `npm test`.
 Do not suppress real failures or count environment-blocked tests as passed.
 
+The legacy UDP room regressions check that a full destination rejects a room
+switch without removing the endpoint's existing registry membership, that an
+endpoint can rejoin its current full room, and that a successful switch updates
+participant snapshots in both rooms. The registry checks use no sockets; relay
+integration tests use loopback UDP and synthetic payloads. These checks do not
+validate native client room switching, TCP rejoin rollback, LiveKit membership
+or real audio/video playback.
+
 ## Two-device media acceptance
 
 Use two computers on a trusted LAN or VPN and a server you control. Use its

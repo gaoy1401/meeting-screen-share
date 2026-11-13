@@ -10,6 +10,13 @@ export class RoomRegistry {
 
   join(endpoint, { room, name, sessionId }, now = Date.now()) {
     const key = endpointKey(endpoint);
+    const destination = this.rooms.get(room);
+    // Reject before changing either room. An existing endpoint does not need
+    // an extra slot when it refreshes its membership in the same full room.
+    if (destination && !destination.has(key) &&
+        destination.size >= this.maxParticipantsPerRoom) {
+      throw new Error("room is full");
+    }
     this.leave(endpoint);
 
     let members = this.rooms.get(room);
@@ -17,10 +24,6 @@ export class RoomRegistry {
       members = new Map();
       this.rooms.set(room, members);
     }
-    if (members.size >= this.maxParticipantsPerRoom) {
-      throw new Error("room is full");
-    }
-
     const member = {
       key,
       address: endpoint.address,

@@ -149,6 +149,7 @@ export class MeetingServer extends EventEmitter {
     if (!this.authorizeJoin({ body, packet, endpoint, room, name })) {
       throw new Error("UDP endpoint is not authorized by signaling");
     }
+    const previousRoom = this.rooms.get(endpoint)?.room;
     const member = this.rooms.join(endpoint, {
       room,
       name,
@@ -161,6 +162,9 @@ export class MeetingServer extends EventEmitter {
       sessionId: member.sessionId
     });
     this.emit("joined", member);
+    if (previousRoom && previousRoom !== room) {
+      this.#broadcastSnapshot(previousRoom);
+    }
     this.#broadcastSnapshot(room);
   }
 
