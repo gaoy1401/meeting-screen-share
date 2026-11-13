@@ -7,6 +7,21 @@
 基于 WebRTC + LiveKit 的原生屏幕共享和语音会议软件，包含 macOS、Windows、
 Linux 客户端及自部署服务端。当前是 **0.1.0 开发预览版**。
 
+## 下载安装包（v0.1.0 预览版）
+
+**[打开全部安装包和 SHA-256 校验文件](https://github.com/gaoy1401/meeting-screen-share/releases/tag/v0.1.0)**
+
+| 系统 | 直接下载 | 安装方法 |
+| --- | --- | --- |
+| macOS 13+，Apple Silicon（M 系列） | [下载 Mac 应用 ZIP](https://github.com/gaoy1401/meeting-screen-share/releases/download/v0.1.0/MeetingClient-0.1.0-macos-arm64.zip) | 解压，把 `MeetingClient.app` 拖入“应用程序”。[Mac 安装说明](docs/INSTALL_MAC.md) |
+| Windows 10/11 x64 | [下载 Windows 安装程序（.exe）](https://github.com/gaoy1401/meeting-screen-share/releases/download/v0.1.0/MeetingClient-Setup-0.1.0-x64.exe) · [免安装 ZIP](https://github.com/gaoy1401/meeting-screen-share/releases/download/v0.1.0/MeetingClient-Windows-x64.zip) | 双击安装程序，或按[免安装说明](windows-client/DISTRIBUTION.md)运行。 |
+| Linux（X11） | [Linux 部署说明](linux-client/README.md) | 从源码运行；本版本未提供 Linux 安装包。 |
+
+Mac 和 Windows 用户下载上面的客户端即可，无需自己编译。
+已有服务端时，安装后填写服务端地址和房间号；首次部署可参考
+[Mac 服务端启动教程](mac-server/README.md)或下方的手动部署说明。
+当前仍为预览版：Mac 未做 Apple 公证，Windows 安装程序未配置发行者签名。
+
 ## 使用前先了解
 
 - 没有公共默认服务器，需要自己启动服务端。

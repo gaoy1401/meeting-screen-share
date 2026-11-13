@@ -10,6 +10,22 @@ WebRTC and a self-hosted LiveKit SFU. **Early preview: trusted LAN / VPN use.**
 [中文说明](README.zh-CN.md) · [Downloads](https://github.com/gaoy1401/meeting-screen-share/releases) · [Architecture](docs/architecture.md) ·
 [Test plan](docs/test-plan.md) · [Release guide](docs/RELEASING.md)
 
+## Download v0.1.0 preview
+
+**[Open all downloads and SHA-256 checksums](https://github.com/gaoy1401/meeting-screen-share/releases/tag/v0.1.0)**
+
+| Platform | Download | Installation |
+| --- | --- | --- |
+| macOS 13+, Apple Silicon (M series) | [Download Mac app ZIP](https://github.com/gaoy1401/meeting-screen-share/releases/download/v0.1.0/MeetingClient-0.1.0-macos-arm64.zip) | Unzip and drag `MeetingClient.app` into Applications. [Mac guide](docs/INSTALL_MAC.md) |
+| Windows 10/11 x64 | [Download Windows installer (.exe)](https://github.com/gaoy1401/meeting-screen-share/releases/download/v0.1.0/MeetingClient-Setup-0.1.0-x64.exe) · [Portable ZIP](https://github.com/gaoy1401/meeting-screen-share/releases/download/v0.1.0/MeetingClient-Windows-x64.zip) | Run the installer, or follow the [portable instructions](windows-client/DISTRIBUTION.md). |
+| Linux (X11) | [Linux setup guide](linux-client/README.md) | Run from source; no Linux installer is included in this release. |
+
+The Mac and Windows client downloads do not require compiling the source.
+To join an existing server, install the client and enter its address and room ID.
+For your first server, follow the [Mac server setup](mac-server/README.md) or the
+[manual server setup below](#manual-server-setup-linux-or-macos).
+This remains a preview: macOS is not notarized and Windows packages are unsigned.
+
 ## Features and status
 
 - macOS: SwiftUI, display/window capture, microphone and system audio.
