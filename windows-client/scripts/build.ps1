@@ -98,12 +98,17 @@ $SdkDirectory = Join-Path $BuildDirectory "_deps\livekit-sdk"
 $LicenseFiles = @(Get-ChildItem $SdkDirectory -Recurse -File | Where-Object {
   $_.Name -match "^(LICENSE|LICENCE|COPYING|NOTICE)"
 })
-if ($LicenseFiles.Count -eq 0) {
-  throw "The LiveKit SDK contains no license notices; refusing to distribute its binaries."
+# The pinned 1.4.0 binary archive omits LICENSE/NOTICE. Preserve the exact
+# matching upstream source notices, then collect any notices in the SDK too.
+$SdkLicenseSupplement = Join-Path $RepositoryRoot "third-party\livekit-cpp"
+$SdkLicenseDestination = Join-Path $LicenseDirectory "livekit-cpp-1.4.0"
+New-Item -ItemType Directory -Force $SdkLicenseDestination | Out-Null
+foreach ($NoticeName in @("LICENSE", "NOTICE", "PROVENANCE.md")) {
+  Copy-Item (Join-Path $SdkLicenseSupplement $NoticeName) $SdkLicenseDestination -Force
 }
 foreach ($LicenseFile in $LicenseFiles) {
   $RelativePath = $LicenseFile.FullName.Substring($SdkDirectory.Length).TrimStart('\')
-  $Destination = Join-Path $LicenseDirectory $RelativePath
+  $Destination = Join-Path $SdkLicenseDestination $RelativePath
   New-Item -ItemType Directory -Force (Split-Path -Parent $Destination) | Out-Null
   Copy-Item $LicenseFile.FullName $Destination -Force
 }

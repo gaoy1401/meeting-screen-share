@@ -30,3 +30,7 @@ separate from source-code licenses. Do not remove upstream license files.
 
 The pinned UniFFI 0.0.5 archive omitted a LICENSE file. The upstream license
 supplement and provenance are included in `third-party/livekit-uniffi/`.
+
+The pinned LiveKit C++ 1.4.0 Windows archive likewise omitted LICENSE/NOTICE.
+Unmodified copies from its matching source tag and their provenance are in
+`third-party/livekit-cpp/` and are included in the Windows package.
