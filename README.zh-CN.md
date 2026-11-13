@@ -41,7 +41,7 @@ open dist/mac/MeetingClient.app
 Mac 预览包是 ad-hoc 签名，未做 Apple 公证；Windows 默认未配置发行者签名。
 系统可能提示未知发布者。请按 CPU 架构下载；Mac 协议检查不能代替 Windows 安装验收。
 
-[Mac 安装](docs/INSTALL_MAC.md) · [Windows](windows-client/README.md) ·
+[Mac 安装](docs/INSTALL_MAC.md) · [Windows](windows-client/README.md) 
 [Linux](linux-client/README.md) · [发布步骤](docs/RELEASING.md)
 
 ## 手动搭建 Linux / Mac 服务端
